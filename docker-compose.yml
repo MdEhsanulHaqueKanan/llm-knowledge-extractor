@@ -1,0 +1,20 @@
+# This section defines all the services (containers) that make up our application.
+services:
+  # We'll name our application's service 'web'.
+  web:
+    # Tells Docker Compose to build the image from the Dockerfile in the current directory ('.').
+    build: .
+    # Defines the port mapping between the host machine and the container.
+    # It maps port 8000 on your local machine to port 8000 inside the container.
+    ports:
+      - "8000:8000"
+    # This is crucial for persisting our SQLite database.
+    # It creates a "volume" that maps a folder named 'app_instance' on your host machine
+    # to the '/app/instance' directory inside the container, where Flask creates the DB file.
+    # Without this, your database would be erased every time the container was removed.
+    volumes:
+      - ./app_instance:/app/instance
+    # This section allows us to pass environment variables into the container.
+    # While we don't need any for this project, it's good practice to show where they would go.
+    environment:
+      - FLASK_ENV=development
