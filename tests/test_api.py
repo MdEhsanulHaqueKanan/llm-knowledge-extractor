@@ -13,7 +13,6 @@ def test_analyze_single_success(test_client, init_database):
     data = response.get_json()
     assert data['summary'] == "This is a mock summary of the provided text, highlighting its key points and themes."
     assert data['topics'] == ["mock data", "software testing", "prototyping"]
-    # CORRECTED ASSERTION: "driving" is a verb, so it should not be in the keywords.
     assert data['keywords'] == ["test", "cars"]
 
 def test_analyze_batch_success(test_client, init_database):
@@ -61,20 +60,16 @@ def test_search_functionality(test_client, init_database):
     WHEN a GET request is made to /api/search
     THEN check that the correct analysis record is returned
     """
-    # Step 1: Add an item to the database to search for.
     test_client.post('/api/analyze',
                      json={"texts": ["This text is about the solar system and planets."]},
                      content_type='application/json')
 
-    # Step 2: Search for it using one of its extracted keywords.
     response = test_client.get('/api/search?topic=planets')
     assert response.status_code == 200
     data = response.get_json()
     assert len(data) == 1
-    # CORRECTED ASSERTION: "solar" is an adjective and should not be in the keywords.
     assert data[0]['keywords'] == ["text", "system", "planets"]
 
-    # Step 3: Search for it using a topic from the mock LLM.
     response = test_client.get('/api/search?topic=prototyping')
     assert response.status_code == 200
     data = response.get_json()
